@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Notate — Year 9</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#141414">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+  :root{
+    --ink:#141414; --paper:#ffffff; --line:#1a1a1a; --muted:#8a8f96;
+    --red:#c0271c; --green:#2e7d32; --rule:#d9dce0; --shade:#eef1f5; --soft:#f6f7f9;
+    --brass:#b08833;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:Inter,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+       background:var(--soft);-webkit-text-size-adjust:100%;}
+  header{background:var(--ink);color:#fff;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0)) 16px;
+         padding-top:calc(14px + env(safe-area-inset-top,0));}
+  header .eye{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c9ccd1;font-weight:700}
+  header h1{margin:2px 0 0;font-size:22px;font-weight:800;letter-spacing:-.3px}
+  header h1 .dot{color:var(--red)}
+  main{max-width:680px;margin:0 auto;padding:14px 16px 40px;}
+  .pick{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch}
+  .pick button{flex:0 0 auto;border:1px solid var(--rule);background:#fff;color:var(--ink);
+    border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer}
+  .pick button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:16px;margin-top:4px;
+    box-shadow:0 1px 2px rgba(20,20,20,.04)}
+  .prompt{font-size:16px;font-weight:700;margin:0 0 2px}
+  .sub{font-size:13.5px;color:#43474d;margin:0 0 12px}
+  .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  .toolbar .lab{font-size:12px;color:var(--muted);font-weight:600;margin-right:2px}
+  .acc{display:flex;gap:6px}
+  .acc button{min-width:46px;height:40px;border:1px solid var(--rule);background:#fff;border-radius:10px;
+    font-size:19px;font-weight:600;cursor:pointer;line-height:1}
+  .acc button .mini{font-size:11px;font-weight:700}
+  .acc button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .staveWrap{width:100%;background:#fff;border-radius:10px;overflow:hidden;touch-action:manipulation}
+  svg.stave{display:block;width:100%;height:auto}
+  .hint{font-size:12px;color:var(--muted);margin:8px 2px 0}
+  .controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+  .controls button{flex:1 1 auto;min-width:120px;border-radius:10px;padding:11px 12px;font-size:14px;
+    font-weight:700;cursor:pointer;border:1px solid var(--ink)}
+  .btn-check{background:var(--ink);color:#fff}
+  .btn-ghost{background:#fff;color:var(--ink)}
+  .btn-ans{background:#fff;color:var(--red);border-color:var(--red)}
+  .feedback{margin-top:12px;font-size:14.5px;font-weight:600;min-height:20px}
+  .feedback.ok{color:var(--green)} .feedback.no{color:var(--red)}
+  .names{margin-top:8px;font-size:15px;font-weight:700;color:var(--red);letter-spacing:.3px;display:none}
+  footer{max-width:680px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:11.5px}
+  .tag{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--rule);
+    border-radius:6px;padding:1px 6px;margin-left:6px;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <div class="eye">Year 9 Music · Theory</div>
+  <h1>Notate<span class="dot">.</span></h1>
+</header>
+<main>
+  <nav class="pick" id="pick"></nav>
+  <section class="card">
+    <p class="prompt" id="prompt"></p>
+    <p class="sub" id="sub"></p>
+    <div class="toolbar">
+      <span class="lab">Accidental</span>
+      <div class="acc" id="acc">
+        <button data-acc="" title="No accidental (plain note)">○</button>
+        <button data-acc="s" title="Sharp">♯</button>
+        <button data-acc="f" title="Flat">♭</button>
+        <button data-acc="n" title="Natural">♮</button>
+      </div>
+    </div>
+    <div class="staveWrap"><svg class="stave" id="stave" xmlns="http://www.w3.org/2000/svg"></svg></div>
+    <p class="hint">Pick an accidental, then tap a space or line to place each note. Tap a note again to move it, or tap its ✕ to clear it.</p>
+    <div class="names" id="names"></div>
+    <div class="controls">
+      <button class="btn-check" id="check">Check</button>
+      <button class="btn-ghost" id="clear">Clear</button>
+      <button class="btn-ans" id="answer">Show answer</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </section>
+</main>
+<footer>Mount Lawley SHS · Music · notate real pitches, then check them. Works offline once installed.</footer>
+
+<script src="glyphs.js"></script>
+<script>
+const SS=16, GS=SS/250;                 // staff space px ; glyph scale
+const LET2OFF={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
+const OFF2LET=['C','D','E','F','G','A','B'];
+const ACCSYM={'':'', s:'♯', f:'♭', n:'♮'};
+const dia=(l,o)=>o*7+LET2OFF[l];
+
+const EX=[
+ {id:'n-tre',title:'Notes · Treble',sub:'Notate these pitches: A4, C5, E5, G5.',clef:'treble',given:1,
+  notes:[['A',4,''],['C',5,''],['E',5,''],['G',5,'']]},
+ {id:'n-bas',title:'Notes · Bass',sub:'Notate these pitches: D3, F3, A3, C4.',clef:'bass',given:1,
+  notes:[['D',3,''],['F',3,''],['A',3,''],['C',4,'']]},
+ {id:'maj-a',title:'A major',sub:'A major scale, ascending (3 sharps). Tonic given.',clef:'treble',given:1,
+  notes:[['A',4,''],['B',4,''],['C',5,'s'],['D',5,''],['E',5,''],['F',5,'s'],['G',5,'s'],['A',5,'']]},
+ {id:'maj-eb',title:'E♭ major',sub:'E♭ major scale, ascending (3 flats). Tonic given.',clef:'treble',given:1,
+  notes:[['E',4,'f'],['F',4,''],['G',4,''],['A',4,'f'],['B',4,'f'],['C',5,''],['D',5,''],['E',5,'f']]},
+ {id:'min-fs',title:'F♯ natural minor',sub:'F♯ natural minor, ascending (3 sharps). Tonic given.',clef:'treble',given:1,
+  notes:[['F',4,'s'],['G',4,'s'],['A',4,''],['B',4,''],['C',5,'s'],['D',5,''],['E',5,''],['F',5,'s']]},
+ {id:'min-c',title:'C natural minor',sub:'C natural minor, ascending (3 flats). Tonic given.',clef:'treble',given:1,
+  notes:[['C',4,''],['D',4,''],['E',4,'f'],['F',4,''],['G',4,''],['A',4,'f'],['B',4,'f'],['C',5,'']]},
+ {id:'harm-a',title:'A harmonic minor',sub:'A harmonic minor, ascending (raised 7th). Tonic given.',clef:'treble',given:1,
+  notes:[['A',4,''],['B',4,''],['C',5,''],['D',5,''],['E',5,''],['F',5,''],['G',5,'s'],['A',5,'']]},
+ {id:'harm-e',title:'E harmonic minor',sub:'E harmonic minor, ascending (raised 7th). Tonic given.',clef:'treble',given:1,
+  notes:[['E',4,''],['F',4,'s'],['G',4,''],['A',4,''],['B',4,''],['C',5,''],['D',5,'s'],['E',5,'']]},
+ {id:'blues-a',title:'A blues',sub:'A blues scale, ascending: A C D E♭ E G A. Tonic given.',clef:'treble',given:1,
+  notes:[['A',4,''],['C',5,''],['D',5,''],['E',5,'f'],['E',5,'n'],['G',5,''],['A',5,'']]},
+];
+// precompute target diatonic
+EX.forEach(e=>e.T=e.notes.map(([l,o,a])=>({d:dia(l,o),a})));
+
+let exi=0, accMode='', slots=[], checked=false;
+
+// ---- geometry ----
+const TOPK=4;                       // staff spaces of headroom above top line
+function clefData(clef){
+  // topLineDia = diatonic of the top staff line; origin line for the clef
+  if(clef==='bass') return {topLineDia:dia('A',3), clefGlyph:'bassClef', clefLineDia:dia('F',3), clefW:3.1};
+  return {topLineDia:dia('F',5), clefGlyph:'trebleClef', clefLineDia:dia('G',4), clefW:2.9};
+}
+function yOf(topLineDia,d){ return TOPK*SS + (topLineDia-d)*(SS/2); }
+
+function geom(){
+  const e=EX[exi], cd=clefData(e.clef);
+  const n=e.notes.length;
+  const padL=SS*0.6, clefSpace=cd.clefW*SS, gap=SS*2.5, padR=SS*1.2;
+  const x0=padL+clefSpace+SS*1.2;
+  const xs=[]; for(let i=0;i<n;i++) xs.push(x0+i*gap);
+  const W=x0+(n-1)*gap+padR;
+  const H=(TOPK+4+TOPK)*SS;            // headroom + staff + room below
+  return {e,cd,n,xs,W,H,bottomLineDia:cd.topLineDia-8};
+}
+
+function gEl(name,x,y,fill){ return `<path d="${GLYPHS[name]}" transform="translate(${x.toFixed(2)},${y.toFixed(2)}) scale(${GS},${-GS})" fill="${fill}"/>`; }
+
+function ledgerYs(topLineDia,bottomLineDia,d){
+  const out=[];
+  if(d>topLineDia) for(let e=topLineDia+2;e<=d;e+=2) out.push(e);
+  if(d<bottomLineDia) for(let e=bottomLineDia-2;e>=d;e-=2) out.push(e);
+  return out;
+}
+
+function render(){
+  const G=geom(), e=G.e, cd=G.cd, S=[];
+  S.push(`<svg class="stave" id="stave" viewBox="0 0 ${G.W.toFixed(1)} ${G.H}" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">`);
+  // staff lines
+  const xL=SS*0.3, xR=G.W-SS*0.3;
+  for(let k=0;k<5;k++){const y=TOPK*SS+k*SS;
+    S.push(`<line x1="${xL}" y1="${y}" x2="${xR}" y2="${y}" stroke="var(--line)" stroke-width="1.4"/>`);}
+  // clef
+  S.push(gEl(cd.clefGlyph, SS*0.6, yOf(cd.topLineDia, cd.clefLineDia), 'var(--ink)'));
+  // slot columns (hit areas) + notes
+  const nw=400*GS;                     // notehead width px
+  for(let i=0;i<G.n;i++){
+    const x=G.xs[i], s=slots[i];
+    // faint column guide so students can see each note position
+    if(!s || (!s.given && !s.reveal && !checked)){
+      const gy0=TOPK*SS-SS*0.6, gy1=TOPK*SS+4*SS+SS*0.6;
+      S.push(`<line x1="${x.toFixed(1)}" y1="${gy0}" x2="${x.toFixed(1)}" y2="${gy1}" stroke="#e3e6ea" stroke-width="1" stroke-dasharray="2 3"/>`);
+      S.push(`<text x="${x.toFixed(1)}" y="${(G.H-SS*0.1).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.62).toFixed(1)}" fill="#b7bcc2" font-family="Inter,sans-serif">${i+1}</text>`);
+    }
+    // hit column
+    S.push(`<rect class="hit" data-i="${i}" x="${(x-SS*1.25).toFixed(1)}" y="0" width="${(SS*2.5).toFixed(1)}" height="${G.H}" fill="transparent"/>`);
+    if(!s) continue;
+    const y=yOf(cd.topLineDia,s.d);
+    // ledger lines
+    ledgerYs(cd.topLineDia,G.bottomLineDia,s.d).forEach(ed=>{
+      const ly=yOf(cd.topLineDia,ed);
+      S.push(`<line x1="${(x-nw*0.72).toFixed(1)}" y1="${ly}" x2="${(x+nw*0.72).toFixed(1)}" y2="${ly}" stroke="var(--line)" stroke-width="1.4"/>`);
+    });
+    let fill='var(--ink)';
+    if(s.given) fill='#9aa0a7';
+    if(checked && !s.given) fill = s.ok ? 'var(--green)' : 'var(--red)';
+    if(s.reveal) fill='var(--red)';
+    // accidental
+    if(s.a){ const aw=(s.a==='s'?189:s.a==='f'?194:150)*GS;
+      S.push(gEl(s.a==='s'?'sharp':s.a==='f'?'flat':'natural', x-nw/2-aw-SS*0.18, y, fill)); }
+    // notehead (origin = left edge, vertical centre)
+    S.push(gEl('noteheadWhole', x-nw/2, y, fill));
+    // clear button for student notes
+    if(!s.given && !s.reveal){
+      const cx=x, cy=G.H-SS*0.9;
+      S.push(`<g class="clr" data-i="${i}" style="cursor:pointer"><circle cx="${cx}" cy="${cy}" r="${(SS*0.55).toFixed(1)}" fill="#fff" stroke="var(--rule)"/><text x="${cx}" y="${(cy+SS*0.2).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.8).toFixed(1)}" fill="#8a8f96">✕</text></g>`);
+    }
+  }
+  S.push('</svg>');
+  document.querySelector('.staveWrap').innerHTML=S.join('');
+  const svg=document.getElementById('stave');
+  svg.addEventListener('pointerdown',onTap);
+  // names row
+  const nm=document.getElementById('names');
+  if(checked||EX[exi].done){ nm.style.display='block';
+    nm.textContent = e.T.map(t=>OFF2LET[t.d%7]+ACCSYM[t.a]).join('  ·  ');
+  } else nm.style.display='none';
+}
+
+function onTap(ev){
+  const svg=document.getElementById('stave');
+  const clr=ev.target.closest('.clr');
+  if(clr){ slots[+clr.dataset.i]=null; checked=false; EX[exi].done=false; feedback('',''); render(); return; }
+  const hit=ev.target.closest('.hit'); if(!hit) return;
+  const i=+hit.dataset.i; const G=geom();
+  if(slots[i] && slots[i].given) return;      // tonic locked
+  // map pointer y -> svg units
+  const r=svg.getBoundingClientRect();
+  const vy=(ev.clientY-r.top)/r.height*G.H;
+  const cd=G.cd;
+  let d=Math.round(cd.topLineDia - (vy-TOPK*SS)/(SS/2));
+  d=Math.max(G.bottomLineDia-6, Math.min(cd.topLineDia+6, d));
+  slots[i]={d, a:accMode};
+  checked=false; EX[exi].done=false; feedback('','');
+  render();
+}
+
+function feedback(msg,cls){ const f=document.getElementById('feedback'); f.textContent=msg; f.className='feedback '+(cls||''); }
+
+function loadEx(i){
+  exi=i; checked=false; accMode='';
+  const e=EX[i]; e.done=false;
+  slots=e.notes.map((_,k)=> k<e.given ? {d:e.T[k].d, a:e.T[k].a, given:true} : null);
+  document.getElementById('prompt').textContent=e.title;
+  document.getElementById('sub').textContent=e.sub;
+  document.querySelectorAll('#pick button').forEach((b,k)=>b.classList.toggle('on',k===i));
+  document.querySelectorAll('#acc button').forEach(b=>b.classList.toggle('on',b.dataset.acc===accMode));
+  feedback('','');
+  render();
+}
+
+function check(){
+  const e=EX[exi]; let right=0, filled=0;
+  for(let k=0;k<e.T.length;k++){ const s=slots[k]; if(!s)continue;
+    if(s.given){continue;}
+    filled++; s.ok=(s.d===e.T[k].d && (s.a||'')===(e.T[k].a||''));
+    if(s.ok) right++;
+  }
+  const need=e.T.length-e.given;
+  const empty=slots.filter((s,k)=>k>=e.given && !s).length;
+  checked=true; render();
+  if(right===need){ feedback('All '+need+' correct. Nicely notated.','ok'); e.done=true; render(); }
+  else { let m=right+' / '+need+' correct.'; if(empty) m+=' '+empty+' still empty.'; m+=' Fix the red notes and check again.'; feedback(m,'no'); }
+}
+function showAnswer(){
+  const e=EX[exi];
+  slots=e.T.map(t=>({d:t.d,a:t.a,given:false,reveal:true}));
+  checked=false; e.done=true; render();
+  feedback('Answer shown. Clear to try it yourself.','');
+}
+function clearAll(){ loadEx(exi); }
+
+// ---- wire up ----
+EX.forEach((e,i)=>{ const b=document.createElement('button'); b.textContent=e.title; b.onclick=()=>loadEx(i); document.getElementById('pick').appendChild(b); });
+document.querySelectorAll('#acc button').forEach(b=>b.onclick=()=>{accMode=b.dataset.acc;
+  document.querySelectorAll('#acc button').forEach(x=>x.classList.toggle('on',x===b));});
+document.getElementById('check').onclick=check;
+document.getElementById('clear').onclick=clearAll;
+document.getElementById('answer').onclick=showAnswer;
+loadEx(0);
+
+// ---- PWA ----
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+</script>
+</body>
+</html>
