@@ -3,56 +3,80 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Notate — Year 9</title>
+<title>Notate — Year 9 Theory</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#141414">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
-  :root{
-    --ink:#141414; --paper:#ffffff; --line:#1a1a1a; --muted:#8a8f96;
-    --red:#c0271c; --green:#2e7d32; --rule:#d9dce0; --shade:#eef1f5; --soft:#f6f7f9;
-    --brass:#b08833;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0}
+  :root{--ink:#141414;--paper:#fff;--line:#1a1a1a;--muted:#8a8f96;--red:#c0271c;--green:#2e7d32;
+    --rule:#d9dce0;--shade:#eef1f5;--soft:#f6f7f9;}
+  *{box-sizing:border-box} html,body{margin:0}
   body{font-family:Inter,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
-       background:var(--soft);-webkit-text-size-adjust:100%;}
-  header{background:var(--ink);color:#fff;padding:14px 16px calc(14px + env(safe-area-inset-bottom,0)) 16px;
-         padding-top:calc(14px + env(safe-area-inset-top,0));}
+       background:var(--soft);-webkit-text-size-adjust:100%}
+  header{background:var(--ink);color:#fff;padding:calc(13px + env(safe-area-inset-top,0)) 16px 13px}
   header .eye{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#c9ccd1;font-weight:700}
-  header h1{margin:2px 0 0;font-size:22px;font-weight:800;letter-spacing:-.3px}
+  header h1{margin:2px 0 0;font-size:21px;font-weight:800;letter-spacing:-.3px}
   header h1 .dot{color:var(--red)}
-  main{max-width:680px;margin:0 auto;padding:14px 16px 40px;}
-  .pick{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 10px;-webkit-overflow-scrolling:touch}
-  .pick button{flex:0 0 auto;border:1px solid var(--rule);background:#fff;color:var(--ink);
+  main{max-width:680px;margin:0 auto;padding:12px 16px 40px}
+  .units{display:flex;gap:6px;overflow-x:auto;padding:4px 2px 8px;-webkit-overflow-scrolling:touch}
+  .units button{flex:0 0 auto;border:1px solid var(--rule);background:#fff;color:var(--ink);
     border-radius:999px;padding:7px 13px;font-size:13px;font-weight:600;white-space:nowrap;cursor:pointer}
-  .pick button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:16px;margin-top:4px;
+  .units button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .dots{display:flex;gap:6px;flex-wrap:wrap;padding:2px 2px 10px}
+  .dots .d{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--rule);background:#fff;cursor:pointer}
+  .dots .d.cur{box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--ink)}
+  .dots .d.ok{background:var(--green);border-color:var(--green)}
+  .dots .d.no{background:var(--red);border-color:var(--red)}
+  .card{background:#fff;border:1px solid var(--rule);border-radius:14px;padding:16px;
     box-shadow:0 1px 2px rgba(20,20,20,.04)}
-  .prompt{font-size:16px;font-weight:700;margin:0 0 2px}
+  .qnum{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700}
+  .prompt{font-size:16.5px;font-weight:700;margin:4px 0 2px}
   .sub{font-size:13.5px;color:#43474d;margin:0 0 12px}
+  .showbox{display:flex;justify-content:center;background:#fff;border:1px solid var(--rule);
+    border-radius:10px;padding:8px;margin:2px 0 14px}
+  .showbox svg{max-width:100%;height:auto}
+  /* notate */
   .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-  .toolbar .lab{font-size:12px;color:var(--muted);font-weight:600;margin-right:2px}
+  .toolbar .lab{font-size:12px;color:var(--muted);font-weight:600}
   .acc{display:flex;gap:6px}
-  .acc button{min-width:46px;height:40px;border:1px solid var(--rule);background:#fff;border-radius:10px;
-    font-size:19px;font-weight:600;cursor:pointer;line-height:1}
-  .acc button .mini{font-size:11px;font-weight:700}
+  .acc button{min-width:44px;height:38px;border:1px solid var(--rule);background:#fff;border-radius:10px;
+    font-size:18px;font-weight:600;cursor:pointer;line-height:1}
   .acc button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
-  .staveWrap{width:100%;background:#fff;border-radius:10px;overflow:hidden;touch-action:manipulation}
+  .staveWrap{width:100%;background:#fff;border-radius:10px;touch-action:manipulation}
   svg.stave{display:block;width:100%;height:auto}
   .hint{font-size:12px;color:var(--muted);margin:8px 2px 0}
+  /* choice */
+  .opts{display:flex;flex-direction:column;gap:8px}
+  .opts button{text-align:left;border:1px solid var(--rule);background:#fff;color:var(--ink);
+    border-radius:10px;padding:12px 14px;font-size:15px;font-weight:600;cursor:pointer}
+  .opts button.pick{border-color:var(--ink)}
+  .opts button.ok{background:#e9f5ea;border-color:var(--green);color:#1f5a24}
+  .opts button.no{background:#fbeceb;border-color:var(--red);color:#8f1d15}
+  .opts button:disabled{cursor:default}
+  /* match */
+  .match{display:flex;flex-direction:column;gap:8px}
+  .mrow{display:flex;align-items:center;gap:10px}
+  .mrow .term{flex:0 0 40%;font-weight:700;font-size:14.5px}
+  .mrow select{flex:1 1 auto;padding:9px 8px;border:1px solid var(--rule);border-radius:9px;
+    font-size:14px;font-family:inherit;background:#fff}
+  .mrow.ok select{border-color:var(--green);background:#e9f5ea}
+  .mrow.no select{border-color:var(--red);background:#fbeceb}
+  .names{margin-top:10px;font-size:15px;font-weight:700;color:var(--red);letter-spacing:.3px;display:none}
   .controls{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
-  .controls button{flex:1 1 auto;min-width:120px;border-radius:10px;padding:11px 12px;font-size:14px;
+  .controls button{flex:1 1 auto;min-width:110px;border-radius:10px;padding:11px 12px;font-size:14px;
     font-weight:700;cursor:pointer;border:1px solid var(--ink)}
   .btn-check{background:var(--ink);color:#fff}
   .btn-ghost{background:#fff;color:var(--ink)}
   .btn-ans{background:#fff;color:var(--red);border-color:var(--red)}
   .feedback{margin-top:12px;font-size:14.5px;font-weight:600;min-height:20px}
   .feedback.ok{color:var(--green)} .feedback.no{color:var(--red)}
-  .names{margin-top:8px;font-size:15px;font-weight:700;color:var(--red);letter-spacing:.3px;display:none}
-  footer{max-width:680px;margin:0 auto;padding:0 16px 30px;color:var(--muted);font-size:11.5px}
-  .tag{display:inline-block;font-size:11px;color:var(--muted);border:1px solid var(--rule);
-    border-radius:6px;padding:1px 6px;margin-left:6px;font-weight:600}
+  .why{font-size:13px;color:#43474d;font-weight:500;margin-top:4px}
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+  .nav button{border:1px solid var(--rule);background:#fff;border-radius:10px;padding:9px 16px;
+    font-size:14px;font-weight:700;cursor:pointer}
+  .nav button:disabled{opacity:.4;cursor:default}
+  .nav .pos{font-size:12.5px;color:var(--muted);font-weight:600}
+  footer{max-width:680px;margin:0 auto;padding:16px 16px 30px;color:var(--muted);font-size:11.5px}
 </style>
 </head>
 <body>
@@ -61,212 +85,211 @@
   <h1>Notate<span class="dot">.</span></h1>
 </header>
 <main>
-  <nav class="pick" id="pick"></nav>
-  <section class="card">
-    <p class="prompt" id="prompt"></p>
-    <p class="sub" id="sub"></p>
-    <div class="toolbar">
-      <span class="lab">Accidental</span>
-      <div class="acc" id="acc">
-        <button data-acc="" title="No accidental (plain note)">○</button>
-        <button data-acc="s" title="Sharp">♯</button>
-        <button data-acc="f" title="Flat">♭</button>
-        <button data-acc="n" title="Natural">♮</button>
-      </div>
-    </div>
-    <div class="staveWrap"><svg class="stave" id="stave" xmlns="http://www.w3.org/2000/svg"></svg></div>
-    <p class="hint">Pick an accidental, then tap a space or line to place each note. Tap a note again to move it, or tap its ✕ to clear it.</p>
-    <div class="names" id="names"></div>
-    <div class="controls">
-      <button class="btn-check" id="check">Check</button>
-      <button class="btn-ghost" id="clear">Clear</button>
-      <button class="btn-ans" id="answer">Show answer</button>
-    </div>
-    <div class="feedback" id="feedback"></div>
-  </section>
+  <nav class="units" id="units"></nav>
+  <div class="dots" id="dots"></div>
+  <section class="card" id="card"></section>
 </main>
-<footer>Mount Lawley SHS · Music · notate real pitches, then check them. Works offline once installed.</footer>
+<footer>Mount Lawley SHS · Music · the whole Year 9 theory syllabus, interactive. Works offline once installed.</footer>
 
 <script src="glyphs.js"></script>
+<script src="content.js"></script>
 <script>
-const SS=16, GS=SS/250;                 // staff space px ; glyph scale
-const LET2OFF={C:0,D:1,E:2,F:3,G:4,A:5,B:6};
-const OFF2LET=['C','D','E','F','G','A','B'];
-const ACCSYM={'':'', s:'♯', f:'♭', n:'♮'};
+const SS=16, GS=SS/250, TOPK=4;
+const LET2OFF={C:0,D:1,E:2,F:3,G:4,A:5,B:6}, OFF2LET=['C','D','E','F','G','A','B'];
+const ACCSYM={'':'',s:'♯',f:'♭',n:'♮'};
 const dia=(l,o)=>o*7+LET2OFF[l];
-
-const EX=[
- {id:'n-tre',title:'Notes · Treble',sub:'Notate these pitches: A4, C5, E5, G5.',clef:'treble',given:1,
-  notes:[['A',4,''],['C',5,''],['E',5,''],['G',5,'']]},
- {id:'n-bas',title:'Notes · Bass',sub:'Notate these pitches: D3, F3, A3, C4.',clef:'bass',given:1,
-  notes:[['D',3,''],['F',3,''],['A',3,''],['C',4,'']]},
- {id:'maj-a',title:'A major',sub:'A major scale, ascending (3 sharps). Tonic given.',clef:'treble',given:1,
-  notes:[['A',4,''],['B',4,''],['C',5,'s'],['D',5,''],['E',5,''],['F',5,'s'],['G',5,'s'],['A',5,'']]},
- {id:'maj-eb',title:'E♭ major',sub:'E♭ major scale, ascending (3 flats). Tonic given.',clef:'treble',given:1,
-  notes:[['E',4,'f'],['F',4,''],['G',4,''],['A',4,'f'],['B',4,'f'],['C',5,''],['D',5,''],['E',5,'f']]},
- {id:'min-fs',title:'F♯ natural minor',sub:'F♯ natural minor, ascending (3 sharps). Tonic given.',clef:'treble',given:1,
-  notes:[['F',4,'s'],['G',4,'s'],['A',4,''],['B',4,''],['C',5,'s'],['D',5,''],['E',5,''],['F',5,'s']]},
- {id:'min-c',title:'C natural minor',sub:'C natural minor, ascending (3 flats). Tonic given.',clef:'treble',given:1,
-  notes:[['C',4,''],['D',4,''],['E',4,'f'],['F',4,''],['G',4,''],['A',4,'f'],['B',4,'f'],['C',5,'']]},
- {id:'harm-a',title:'A harmonic minor',sub:'A harmonic minor, ascending (raised 7th). Tonic given.',clef:'treble',given:1,
-  notes:[['A',4,''],['B',4,''],['C',5,''],['D',5,''],['E',5,''],['F',5,''],['G',5,'s'],['A',5,'']]},
- {id:'harm-e',title:'E harmonic minor',sub:'E harmonic minor, ascending (raised 7th). Tonic given.',clef:'treble',given:1,
-  notes:[['E',4,''],['F',4,'s'],['G',4,''],['A',4,''],['B',4,''],['C',5,''],['D',5,'s'],['E',5,'']]},
- {id:'blues-a',title:'A blues',sub:'A blues scale, ascending: A C D E♭ E G A. Tonic given.',clef:'treble',given:1,
-  notes:[['A',4,''],['C',5,''],['D',5,''],['E',5,'f'],['E',5,'n'],['G',5,''],['A',5,'']]},
-];
-// precompute target diatonic
-EX.forEach(e=>e.T=e.notes.map(([l,o,a])=>({d:dia(l,o),a})));
-
-let exi=0, accMode='', slots=[], checked=false;
-
-// ---- geometry ----
-const TOPK=4;                       // staff spaces of headroom above top line
+function parseNote(s){let l=s[0],a='',r=s.slice(1);
+  if(r[0]==='#'){a='s';r=r.slice(1)} else if(r[0]==='b'){a='f';r=r.slice(1)} else if(r[0]==='n'){a='n';r=r.slice(1)}
+  return{l,o:parseInt(r,10),a};}
 function clefData(clef){
-  // topLineDia = diatonic of the top staff line; origin line for the clef
-  if(clef==='bass') return {topLineDia:dia('A',3), clefGlyph:'bassClef', clefLineDia:dia('F',3), clefW:3.1};
-  return {topLineDia:dia('F',5), clefGlyph:'trebleClef', clefLineDia:dia('G',4), clefW:2.9};
+  if(clef==='bass') return {topLineDia:dia('A',3),glyph:'bassClef',lineDia:dia('F',3),clefW:3.1};
+  return {topLineDia:dia('F',5),glyph:'trebleClef',lineDia:dia('G',4),clefW:2.9};
 }
-function yOf(topLineDia,d){ return TOPK*SS + (topLineDia-d)*(SS/2); }
+function yOf(topLineDia,d){return TOPK*SS+(topLineDia-d)*(SS/2);}
+function gEl(name,x,y,fill){return `<path d="${GLYPHS[name]}" transform="translate(${x.toFixed(2)},${y.toFixed(2)}) scale(${GS},${-GS})" fill="${fill}"/>`;}
+function ledgerYs(top,bot,d){const o=[];if(d>top)for(let e=top+2;e<=d;e+=2)o.push(e);if(d<bot)for(let e=bot-2;e>=d;e-=2)o.push(e);return o;}
+const NW=400*GS;
+function accW(a){return (a==='s'?189:a==='f'?194:150)*GS;}
+function drawNote(x,y,a,fill){let s='';
+  if(a) s+=gEl(a==='s'?'sharp':a==='f'?'flat':'natural', x-NW/2-accW(a)-SS*0.18, y, fill);
+  s+=gEl('noteheadWhole', x-NW/2, y, fill); return s;}
 
-function geom(){
-  const e=EX[exi], cd=clefData(e.clef);
-  const n=e.notes.length;
-  const padL=SS*0.6, clefSpace=cd.clefW*SS, gap=SS*2.5, padR=SS*1.2;
-  const x0=padL+clefSpace+SS*1.2;
-  const xs=[]; for(let i=0;i<n;i++) xs.push(x0+i*gap);
-  const W=x0+(n-1)*gap+padR;
-  const H=(TOPK+4+TOPK)*SS;            // headroom + staff + room below
-  return {e,cd,n,xs,W,H,bottomLineDia:cd.topLineDia-8};
+// ---- static notation (for choice `show`) ----
+function staticStave(clef, cols){
+  const cd=clefData(clef), bot=cd.topLineDia-8;
+  const padL=SS*0.5, clefSpace=cd.clefW*SS, x0=padL+clefSpace+SS*1.1, gap=SS*2.4, padR=SS*1.0;
+  const W=x0+(cols.length-1)*gap+padR, H=(TOPK+4+TOPK)*SS;
+  const S=[`<svg viewBox="0 0 ${W.toFixed(1)} ${H}" preserveAspectRatio="xMidYMid meet" width="${Math.min(W*2.2,340)}" xmlns="http://www.w3.org/2000/svg">`];
+  for(let k=0;k<5;k++){const y=TOPK*SS+k*SS;S.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y}" x2="${(W-SS*0.3).toFixed(1)}" y2="${y}" stroke="var(--line)" stroke-width="1.3"/>`);}
+  S.push(gEl(cd.glyph, SS*0.5, yOf(cd.topLineDia,cd.lineDia),'var(--ink)'));
+  cols.forEach((col,i)=>{const x=x0+i*gap;
+    col.forEach(ns=>{const n=parseNote(ns), d=dia(n.l,n.o), y=yOf(cd.topLineDia,d);
+      ledgerYs(cd.topLineDia,bot,d).forEach(ed=>{const ly=yOf(cd.topLineDia,ed);
+        S.push(`<line x1="${(x-NW*0.72).toFixed(1)}" y1="${ly}" x2="${(x+NW*0.72).toFixed(1)}" y2="${ly}" stroke="var(--line)" stroke-width="1.3"/>`);});
+      S.push(drawNote(x,y,n.a,'var(--ink)'));});
+  });
+  S.push('</svg>'); return S.join('');
 }
 
-function gEl(name,x,y,fill){ return `<path d="${GLYPHS[name]}" transform="translate(${x.toFixed(2)},${y.toFixed(2)}) scale(${GS},${-GS})" fill="${fill}"/>`; }
+// ---- state ----
+let ui=0, qi=0, accMode='';
+let slots=[], nchecked=false;         // notate
+let answered=false;                   // choice/match
+const results={};                     // results[ui+'.'+qi] = 'ok'|'no'
+function rkey(){return ui+'.'+qi;}
 
-function ledgerYs(topLineDia,bottomLineDia,d){
-  const out=[];
-  if(d>topLineDia) for(let e=topLineDia+2;e<=d;e+=2) out.push(e);
-  if(d<bottomLineDia) for(let e=bottomLineDia-2;e>=d;e-=2) out.push(e);
-  return out;
+function renderUnits(){const n=document.getElementById('units');n.innerHTML='';
+  UNITS.forEach((u,i)=>{const b=document.createElement('button');b.textContent=u.name;
+    b.className=i===ui?'on':'';b.onclick=()=>{ui=i;qi=0;load();};n.appendChild(b);});}
+function renderDots(){const d=document.getElementById('dots');d.innerHTML='';
+  UNITS[ui].qs.forEach((_,i)=>{const s=document.createElement('div');
+    const r=results[ui+'.'+i]; s.className='d'+(i===qi?' cur':'')+(r?(' '+r):'');
+    s.onclick=()=>{qi=i;load();};d.appendChild(s);});}
+
+function feedback(msg,cls,why){const f=document.getElementById('fb');if(!f)return;
+  f.innerHTML=msg+(why?`<div class="why">${why}</div>`:'');f.className='feedback '+(cls||'');}
+
+function load(){
+  const q=UNITS[ui].qs[qi];
+  accMode=''; slots=[]; nchecked=false; answered=false;
+  renderUnits(); renderDots();
+  const c=document.getElementById('card');
+  const head=`<div class="qnum">${UNITS[ui].name} · Question ${qi+1} of ${UNITS[ui].qs.length}</div>
+    <p class="prompt">${q.prompt}</p>${q.sub?`<p class="sub">${q.sub}</p>`:''}`;
+  let body='';
+  if(q.t==='notate'){
+    slots=q.notes.map((n,k)=>k<q.given?{d:dia(n[0],n[1]),a:n[2],given:true}:null);
+    body=`<div class="toolbar"><span class="lab">Accidental</span><div class="acc" id="acc">
+      <button data-acc="" title="Plain note">○</button><button data-acc="s">♯</button>
+      <button data-acc="f">♭</button><button data-acc="n">♮</button></div></div>
+      <div class="staveWrap" id="sw"></div>
+      <p class="hint">Pick an accidental, then tap a line or space to place each note. Tap a note to move it, or its ✕ to clear.</p>
+      <div class="names" id="names"></div>
+      <div class="controls"><button class="btn-check" id="check">Check</button>
+      <button class="btn-ghost" id="clear">Clear</button><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else if(q.t==='choice'){
+    body=(q.show?`<div class="showbox">${staticStave(q.show.clef,q.show.cols)}</div>`:'')
+      +`<div class="opts" id="opts">`+q.options.map(o=>`<button data-o="${o}">${o}</button>`).join('')+`</div>`
+      +`<div class="controls"><button class="btn-ans" id="answer">Show answer</button></div>`;
+  } else if(q.t==='match'){
+    const rights=q.pairs.map(p=>p[1]); const shuf=rights.slice().sort(()=>Math.random()-0.5);
+    body=`<div class="match" id="match">`+q.pairs.map((p,r)=>
+      `<div class="mrow" data-r="${r}"><div class="term">${p[0]}</div><select><option value="">— choose —</option>`
+      +shuf.map(x=>`<option value="${x.replace(/"/g,'&quot;')}">${x}</option>`).join('')+`</select></div>`).join('')
+      +`</div><div class="controls"><button class="btn-check" id="check">Check</button>
+        <button class="btn-ans" id="answer">Show answer</button></div>`;
+  }
+  c.innerHTML=head+body+`<div class="feedback" id="fb"></div>
+    <div class="nav"><button id="prev">‹ Prev</button>
+    <span class="pos">${qi+1} / ${UNITS[ui].qs.length}</span>
+    <button id="next">Next ›</button></div>`;
+  wire(q);
+  if(q.t==='notate') drawStave();
 }
 
-function render(){
-  const G=geom(), e=G.e, cd=G.cd, S=[];
-  S.push(`<svg class="stave" id="stave" viewBox="0 0 ${G.W.toFixed(1)} ${G.H}" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">`);
-  // staff lines
-  const xL=SS*0.3, xR=G.W-SS*0.3;
-  for(let k=0;k<5;k++){const y=TOPK*SS+k*SS;
-    S.push(`<line x1="${xL}" y1="${y}" x2="${xR}" y2="${y}" stroke="var(--line)" stroke-width="1.4"/>`);}
-  // clef
-  S.push(gEl(cd.clefGlyph, SS*0.6, yOf(cd.topLineDia, cd.clefLineDia), 'var(--ink)'));
-  // slot columns (hit areas) + notes
-  const nw=400*GS;                     // notehead width px
-  for(let i=0;i<G.n;i++){
-    const x=G.xs[i], s=slots[i];
-    // faint column guide so students can see each note position
-    if(!s || (!s.given && !s.reveal && !checked)){
-      const gy0=TOPK*SS-SS*0.6, gy1=TOPK*SS+4*SS+SS*0.6;
-      S.push(`<line x1="${x.toFixed(1)}" y1="${gy0}" x2="${x.toFixed(1)}" y2="${gy1}" stroke="#e3e6ea" stroke-width="1" stroke-dasharray="2 3"/>`);
-      S.push(`<text x="${x.toFixed(1)}" y="${(G.H-SS*0.1).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.62).toFixed(1)}" fill="#b7bcc2" font-family="Inter,sans-serif">${i+1}</text>`);
-    }
-    // hit column
-    S.push(`<rect class="hit" data-i="${i}" x="${(x-SS*1.25).toFixed(1)}" y="0" width="${(SS*2.5).toFixed(1)}" height="${G.H}" fill="transparent"/>`);
+function wire(q){
+  document.getElementById('prev').onclick=()=>{if(qi>0){qi--;load();}else if(ui>0){ui--;qi=UNITS[ui].qs.length-1;load();}};
+  document.getElementById('next').onclick=()=>{if(qi<UNITS[ui].qs.length-1){qi++;load();}else if(ui<UNITS.length-1){ui++;qi=0;load();}};
+  document.getElementById('prev').disabled = (ui===0&&qi===0);
+  document.getElementById('next').disabled = (ui===UNITS.length-1&&qi===UNITS[ui].qs.length-1);
+  if(q.t==='notate'){
+    document.querySelectorAll('#acc button').forEach(b=>{b.classList.toggle('on',b.dataset.acc===accMode);
+      b.onclick=()=>{accMode=b.dataset.acc;document.querySelectorAll('#acc button').forEach(x=>x.classList.toggle('on',x===b));};});
+    document.getElementById('check').onclick=checkNotate;
+    document.getElementById('clear').onclick=()=>load();
+    document.getElementById('answer').onclick=answerNotate;
+  } else if(q.t==='choice'){
+    document.querySelectorAll('#opts button').forEach(b=>b.onclick=()=>pickChoice(b,q));
+    document.getElementById('answer').onclick=()=>answerChoice(q);
+  } else if(q.t==='match'){
+    document.getElementById('check').onclick=()=>checkMatch(q);
+    document.getElementById('answer').onclick=()=>answerMatch(q);
+  }
+}
+
+// ---- notate ----
+function drawStave(){
+  const q=UNITS[ui].qs[qi], cd=clefData(q.clef), bot=cd.topLineDia-8;
+  const n=q.notes.length, padL=SS*0.6, clefSpace=cd.clefW*SS, x0=padL+clefSpace+SS*1.2, gap=SS*2.5, padR=SS*1.2;
+  const xs=[];for(let i=0;i<n;i++)xs.push(x0+i*gap);
+  const W=x0+(n-1)*gap+padR, H=(TOPK+4+TOPK)*SS;
+  const S=[`<svg class="stave" id="stave" viewBox="0 0 ${W.toFixed(1)} ${H}" preserveAspectRatio="xMinYMid meet" xmlns="http://www.w3.org/2000/svg">`];
+  for(let k=0;k<5;k++){const y=TOPK*SS+k*SS;S.push(`<line x1="${(SS*0.3).toFixed(1)}" y1="${y}" x2="${(W-SS*0.3).toFixed(1)}" y2="${y}" stroke="var(--line)" stroke-width="1.4"/>`);}
+  S.push(gEl(cd.glyph,SS*0.6,yOf(cd.topLineDia,cd.lineDia),'var(--ink)'));
+  for(let i=0;i<n;i++){const x=xs[i], s=slots[i];
+    if(!s || (!s.given && !s.reveal && !nchecked)){const g0=TOPK*SS-SS*0.6,g1=TOPK*SS+4*SS+SS*0.6;
+      S.push(`<line x1="${x.toFixed(1)}" y1="${g0}" x2="${x.toFixed(1)}" y2="${g1}" stroke="#e3e6ea" stroke-width="1" stroke-dasharray="2 3"/>`);
+      S.push(`<text x="${x.toFixed(1)}" y="${(H-SS*0.1).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.6).toFixed(1)}" fill="#b7bcc2">${i+1}</text>`);}
+    S.push(`<rect class="hit" data-i="${i}" x="${(x-SS*1.25).toFixed(1)}" y="0" width="${(SS*2.5).toFixed(1)}" height="${H}" fill="transparent"/>`);
     if(!s) continue;
     const y=yOf(cd.topLineDia,s.d);
-    // ledger lines
-    ledgerYs(cd.topLineDia,G.bottomLineDia,s.d).forEach(ed=>{
-      const ly=yOf(cd.topLineDia,ed);
-      S.push(`<line x1="${(x-nw*0.72).toFixed(1)}" y1="${ly}" x2="${(x+nw*0.72).toFixed(1)}" y2="${ly}" stroke="var(--line)" stroke-width="1.4"/>`);
-    });
-    let fill='var(--ink)';
-    if(s.given) fill='#9aa0a7';
-    if(checked && !s.given) fill = s.ok ? 'var(--green)' : 'var(--red)';
-    if(s.reveal) fill='var(--red)';
-    // accidental
-    if(s.a){ const aw=(s.a==='s'?189:s.a==='f'?194:150)*GS;
-      S.push(gEl(s.a==='s'?'sharp':s.a==='f'?'flat':'natural', x-nw/2-aw-SS*0.18, y, fill)); }
-    // notehead (origin = left edge, vertical centre)
-    S.push(gEl('noteheadWhole', x-nw/2, y, fill));
-    // clear button for student notes
-    if(!s.given && !s.reveal){
-      const cx=x, cy=G.H-SS*0.9;
-      S.push(`<g class="clr" data-i="${i}" style="cursor:pointer"><circle cx="${cx}" cy="${cy}" r="${(SS*0.55).toFixed(1)}" fill="#fff" stroke="var(--rule)"/><text x="${cx}" y="${(cy+SS*0.2).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.8).toFixed(1)}" fill="#8a8f96">✕</text></g>`);
-    }
+    ledgerYs(cd.topLineDia,bot,s.d).forEach(ed=>{const ly=yOf(cd.topLineDia,ed);
+      S.push(`<line x1="${(x-NW*0.72).toFixed(1)}" y1="${ly}" x2="${(x+NW*0.72).toFixed(1)}" y2="${ly}" stroke="var(--line)" stroke-width="1.4"/>`);});
+    let fill='var(--ink)'; if(s.given)fill='#9aa0a7'; if(nchecked&&!s.given)fill=s.ok?'var(--green)':'var(--red)'; if(s.reveal)fill='var(--red)';
+    S.push(drawNote(x,y,s.a,fill));
+    if(!s.given&&!s.reveal){const cy=H-SS*0.9;
+      S.push(`<g class="clr" data-i="${i}"><circle cx="${x}" cy="${cy}" r="${(SS*0.55).toFixed(1)}" fill="#fff" stroke="var(--rule)"/><text x="${x}" y="${(cy+SS*0.2).toFixed(1)}" text-anchor="middle" font-size="${(SS*0.8).toFixed(1)}" fill="#8a8f96">✕</text></g>`);}
   }
   S.push('</svg>');
-  document.querySelector('.staveWrap').innerHTML=S.join('');
-  const svg=document.getElementById('stave');
-  svg.addEventListener('pointerdown',onTap);
-  // names row
+  document.getElementById('sw').innerHTML=S.join('');
+  document.getElementById('stave').addEventListener('pointerdown',onTap);
   const nm=document.getElementById('names');
-  if(checked||EX[exi].done){ nm.style.display='block';
-    nm.textContent = e.T.map(t=>OFF2LET[t.d%7]+ACCSYM[t.a]).join('  ·  ');
-  } else nm.style.display='none';
+  if(nchecked||UNITS[ui].qs[qi].done){nm.style.display='block';
+    nm.textContent=q.notes.map(t=>OFF2LET[dia(t[0],t[1])%7]+ACCSYM[t[2]]).join('  ·  ');}else nm.style.display='none';
 }
-
 function onTap(ev){
-  const svg=document.getElementById('stave');
-  const clr=ev.target.closest('.clr');
-  if(clr){ slots[+clr.dataset.i]=null; checked=false; EX[exi].done=false; feedback('',''); render(); return; }
-  const hit=ev.target.closest('.hit'); if(!hit) return;
-  const i=+hit.dataset.i; const G=geom();
-  if(slots[i] && slots[i].given) return;      // tonic locked
-  // map pointer y -> svg units
-  const r=svg.getBoundingClientRect();
-  const vy=(ev.clientY-r.top)/r.height*G.H;
-  const cd=G.cd;
-  let d=Math.round(cd.topLineDia - (vy-TOPK*SS)/(SS/2));
-  d=Math.max(G.bottomLineDia-6, Math.min(cd.topLineDia+6, d));
-  slots[i]={d, a:accMode};
-  checked=false; EX[exi].done=false; feedback('','');
-  render();
+  const svg=document.getElementById('stave'), q=UNITS[ui].qs[qi];
+  const clr=ev.target.closest('.clr'); if(clr){slots[+clr.dataset.i]=null;nchecked=false;feedback('','');drawStave();return;}
+  const hit=ev.target.closest('.hit'); if(!hit)return; const i=+hit.dataset.i;
+  if(slots[i]&&slots[i].given)return;
+  const cd=clefData(q.clef), r=svg.getBoundingClientRect(), H=(TOPK+4+TOPK)*SS;
+  const vy=(ev.clientY-r.top)/r.height*H;
+  let d=Math.round(cd.topLineDia-(vy-TOPK*SS)/(SS/2));
+  d=Math.max(cd.topLineDia-8-6,Math.min(cd.topLineDia+6,d));
+  slots[i]={d,a:accMode}; nchecked=false; feedback('',''); drawStave();
 }
-
-function feedback(msg,cls){ const f=document.getElementById('feedback'); f.textContent=msg; f.className='feedback '+(cls||''); }
-
-function loadEx(i){
-  exi=i; checked=false; accMode='';
-  const e=EX[i]; e.done=false;
-  slots=e.notes.map((_,k)=> k<e.given ? {d:e.T[k].d, a:e.T[k].a, given:true} : null);
-  document.getElementById('prompt').textContent=e.title;
-  document.getElementById('sub').textContent=e.sub;
-  document.querySelectorAll('#pick button').forEach((b,k)=>b.classList.toggle('on',k===i));
-  document.querySelectorAll('#acc button').forEach(b=>b.classList.toggle('on',b.dataset.acc===accMode));
-  feedback('','');
-  render();
+function checkNotate(){
+  const q=UNITS[ui].qs[qi]; let right=0; const need=q.notes.length-q.given;
+  for(let k=q.given;k<q.notes.length;k++){const s=slots[k]; if(!s)continue;
+    s.ok=(s.d===dia(q.notes[k][0],q.notes[k][1])&&(s.a||'')===(q.notes[k][2]||'')); if(s.ok)right++;}
+  const empty=slots.filter((s,k)=>k>=q.given&&!s).length;
+  nchecked=true; drawStave();
+  if(right===need){feedback('All '+need+' correct. Nicely notated.','ok');results[rkey()]='ok';}
+  else{let m=right+' / '+need+' correct.';if(empty)m+=' '+empty+' empty.';m+=' Fix the red notes and check again.';
+    feedback(m,'no');results[rkey()]='no';}
+  renderDots();
 }
+function answerNotate(){const q=UNITS[ui].qs[qi];
+  slots=q.notes.map(t=>({d:dia(t[0],t[1]),a:t[2],reveal:true})); nchecked=false; q.done=true;
+  drawStave(); feedback('Answer shown. Clear to try it yourself.','');}
 
-function check(){
-  const e=EX[exi]; let right=0, filled=0;
-  for(let k=0;k<e.T.length;k++){ const s=slots[k]; if(!s)continue;
-    if(s.given){continue;}
-    filled++; s.ok=(s.d===e.T[k].d && (s.a||'')===(e.T[k].a||''));
-    if(s.ok) right++;
-  }
-  const need=e.T.length-e.given;
-  const empty=slots.filter((s,k)=>k>=e.given && !s).length;
-  checked=true; render();
-  if(right===need){ feedback('All '+need+' correct. Nicely notated.','ok'); e.done=true; render(); }
-  else { let m=right+' / '+need+' correct.'; if(empty) m+=' '+empty+' still empty.'; m+=' Fix the red notes and check again.'; feedback(m,'no'); }
+// ---- choice ----
+function pickChoice(btn,q){ if(answered)return; answered=true;
+  const ok=btn.dataset.o===q.answer;
+  document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;
+    if(b.dataset.o===q.answer)b.classList.add('ok'); if(b===btn&&!ok)b.classList.add('no');});
+  if(ok){feedback('Correct.','ok',q.why);results[rkey()]='ok';}
+  else{feedback('Not quite — the answer is highlighted.','no',q.why);results[rkey()]='no';}
+  renderDots();
 }
-function showAnswer(){
-  const e=EX[exi];
-  slots=e.T.map(t=>({d:t.d,a:t.a,given:false,reveal:true}));
-  checked=false; e.done=true; render();
-  feedback('Answer shown. Clear to try it yourself.','');
+function answerChoice(q){answered=true;
+  document.querySelectorAll('#opts button').forEach(b=>{b.disabled=true;if(b.dataset.o===q.answer)b.classList.add('ok');});
+  feedback('Answer shown.','',q.why);}
+
+// ---- match ----
+function checkMatch(q){const rows=document.querySelectorAll('#match .mrow'); let right=0;
+  rows.forEach((row,r)=>{const sel=row.querySelector('select'), want=q.pairs[r][1];
+    const ok=sel.value===want; row.className='mrow '+(sel.value?(ok?'ok':'no'):'no'); if(ok)right++;});
+  if(right===q.pairs.length){feedback('All matched correctly.','ok',q.why);results[rkey()]='ok';}
+  else{feedback(right+' / '+q.pairs.length+' matched. Fix the red rows.','no',q.why);results[rkey()]='no';}
+  renderDots();
 }
-function clearAll(){ loadEx(exi); }
+function answerMatch(q){const rows=document.querySelectorAll('#match .mrow');
+  rows.forEach((row,r)=>{row.querySelector('select').value=q.pairs[r][1];row.className='mrow ok';});
+  feedback('Answer shown.','',q.why);}
 
-// ---- wire up ----
-EX.forEach((e,i)=>{ const b=document.createElement('button'); b.textContent=e.title; b.onclick=()=>loadEx(i); document.getElementById('pick').appendChild(b); });
-document.querySelectorAll('#acc button').forEach(b=>b.onclick=()=>{accMode=b.dataset.acc;
-  document.querySelectorAll('#acc button').forEach(x=>x.classList.toggle('on',x===b));});
-document.getElementById('check').onclick=check;
-document.getElementById('clear').onclick=clearAll;
-document.getElementById('answer').onclick=showAnswer;
-loadEx(0);
-
-// ---- PWA ----
-if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{})); }
+renderUnits(); load();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>
