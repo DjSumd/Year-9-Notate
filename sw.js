@@ -1,10 +1,11 @@
 // Bump VERSION whenever any cached file changes so the phone fetches fresh copies.
-const VERSION = 'notate-y9-v3';
+const VERSION = 'notate-y9-v4';
 const ASSETS = [
   './',
   './index.html',
   './glyphs.js',
   './content.js',
+  './refs.js',
   './manifest.webmanifest',
   './icon-192.png',
   './icon-512.png',
